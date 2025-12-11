@@ -1,0 +1,550 @@
+/**
+ * SIMBA Specification Builder - Custom Styles
+ * Following conversation.html style patterns
+ */
+
+/* ===================================
+   Variables and Theme
+   =================================== */
+:root {
+    --primary-color: #667eea;
+    --primary-dark: #764ba2;
+    --success-color: #4CAF50;
+    --warning-color: #FF9800;
+    --error-color: #f44336;
+    --info-color: #2196F3;
+
+    --bg-color: #f5f5f5;
+    --card-bg: #ffffff;
+    --border-color: #e0e0e0;
+
+    --text-primary: #333333;
+    --text-secondary: #666666;
+    --text-muted: #999999;
+
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.12);
+    --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.15);
+
+    --transition-fast: 0.2s ease;
+    --transition-normal: 0.3s ease;
+}
+
+/* Dark mode */
+.dark {
+    --bg-color: #121212;
+    --card-bg: #1e1e1e;
+    --border-color: #333333;
+    --text-primary: #ffffff;
+    --text-secondary: #cccccc;
+    --text-muted: #888888;
+}
+
+/* ===================================
+   Base Styles
+   =================================== */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+}
+
+/* ===================================
+   Navbar Customization
+   =================================== */
+.navbar {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+}
+
+.navbar-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin: 0;
+}
+
+.navbar .link {
+    color: #ffffff;
+    transition: opacity var(--transition-fast);
+}
+
+.navbar .link:hover {
+    opacity: 0.8;
+}
+
+.navbar .material-icons {
+    color: #ffffff;
+}
+
+.badge.color-orange {
+    background: var(--warning-color);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+/* ===================================
+   Cards and Containers
+   =================================== */
+.card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 16px;
+    overflow: hidden;
+    transition: box-shadow var(--transition-fast);
+}
+
+.card:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.card-header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    color: #ffffff;
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-header-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.card-header .material-icons {
+    color: #ffffff;
+    cursor: pointer;
+    transition: transform var(--transition-fast);
+}
+
+.card-header .material-icons:hover {
+    transform: scale(1.1);
+}
+
+.card-content-padding {
+    padding: 16px;
+}
+
+/* ===================================
+   Spec Editor
+   =================================== */
+.spec-editor {
+    padding: 16px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Metadata Display */
+.metadata-display p {
+    margin: 8px 0;
+    color: var(--text-secondary);
+}
+
+.metadata-display strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+/* ===================================
+   Section Items
+   =================================== */
+.section-item {
+    background: var(--card-bg);
+    border-left: 4px solid var(--primary-color);
+    margin-bottom: 8px;
+    transition: all var(--transition-fast);
+}
+
+.section-item:hover {
+    transform: translateX(4px);
+    box-shadow: var(--shadow-sm);
+}
+
+.section-item .item-media {
+    color: var(--text-muted);
+}
+
+.section-item .item-title {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.section-item .item-subtitle {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.section-item .item-after {
+    display: flex;
+    gap: 12px;
+}
+
+.section-item .material-icons {
+    font-size: 20px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: color var(--transition-fast);
+}
+
+.section-item .material-icons:hover {
+    color: var(--primary-color);
+}
+
+/* ===================================
+   Empty State
+   =================================== */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.empty-state .material-icons {
+    font-size: 80px;
+    color: var(--text-muted);
+    opacity: 0.5;
+}
+
+.empty-state p {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    margin: 20px 0;
+}
+
+.empty-state .button {
+    margin-top: 20px;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    color: #ffffff;
+}
+
+/* ===================================
+   Validation Results
+   =================================== */
+.validation-error {
+    border-left: 4px solid var(--error-color);
+    margin-bottom: 4px;
+}
+
+.validation-warning {
+    border-left: 4px solid var(--warning-color);
+    margin-bottom: 4px;
+}
+
+.validation-info {
+    border-left: 4px solid var(--info-color);
+    margin-bottom: 4px;
+}
+
+.validation-error .item-title,
+.validation-warning .item-title,
+.validation-info .item-title {
+    font-size: 0.95rem;
+}
+
+.validation-error .item-subtitle,
+.validation-warning .item-subtitle,
+.validation-info .item-subtitle {
+    font-size: 0.8rem;
+    font-family: monospace;
+    color: var(--text-muted);
+}
+
+/* ===================================
+   Preview Pane
+   =================================== */
+.preview-pane {
+    padding: 16px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.preview-toolbar {
+    margin-bottom: 16px;
+}
+
+.preview-content {
+    flex: 1;
+    background: var(--card-bg);
+    border-radius: 8px;
+    padding: 20px;
+    overflow-y: auto;
+    box-shadow: var(--shadow-sm);
+}
+
+.preview-content pre {
+    margin: 0;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    color: var(--text-primary);
+}
+
+/* ===================================
+   Template Gallery
+   =================================== */
+.template-icon {
+    font-size: 32px;
+    line-height: 1;
+}
+
+.popup-template-gallery .item-link {
+    transition: background-color var(--transition-fast);
+}
+
+.popup-template-gallery .item-link:hover {
+    background-color: rgba(102, 126, 234, 0.1);
+}
+
+.popup-template-gallery .item-subtitle {
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    color: var(--primary-color);
+}
+
+/* ===================================
+   Sheet Modal (Section Editor)
+   =================================== */
+.sheet-section-editor {
+    background: var(--bg-color);
+}
+
+.sheet-section-editor .toolbar {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+}
+
+.sheet-section-editor .toolbar .link {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.sheet-section-editor textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+/* ===================================
+   Popovers
+   =================================== */
+.popover {
+    border-radius: 8px;
+    box-shadow: var(--shadow-lg);
+}
+
+.popover .list-button {
+    transition: background-color var(--transition-fast);
+}
+
+.popover .list-button:hover {
+    background-color: rgba(102, 126, 234, 0.1);
+}
+
+.popover .material-icons,
+.popover .fa {
+    margin-right: 12px;
+    color: var(--primary-color);
+}
+
+/* ===================================
+   Buttons
+   =================================== */
+.button-fill {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    color: #ffffff;
+    border: none;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.button-fill:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.button-fill:active {
+    transform: translateY(0);
+}
+
+/* ===================================
+   Form Inputs
+   =================================== */
+.item-input-wrap input,
+.item-input-wrap textarea {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 12px;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.item-input-wrap input:focus,
+.item-input-wrap textarea:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    outline: none;
+}
+
+.item-input-wrap textarea {
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+    font-size: 0.9rem;
+}
+
+/* ===================================
+   Lists
+   =================================== */
+.list ul {
+    background: transparent;
+}
+
+.list .item-content {
+    background: var(--card-bg);
+    border-radius: 8px;
+    margin-bottom: 4px;
+    transition: background-color var(--transition-fast);
+}
+
+.list .item-content:hover {
+    background-color: rgba(102, 126, 234, 0.05);
+}
+
+/* ===================================
+   Block Title
+   =================================== */
+.block-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-top: 24px;
+    margin-bottom: 12px;
+}
+
+/* ===================================
+   Sortable
+   =================================== */
+.sortable .sortable-handler {
+    cursor: move;
+}
+
+.sortable-sorting {
+    opacity: 0.5;
+}
+
+/* ===================================
+   Utilities
+   =================================== */
+.display-flex {
+    display: flex;
+}
+
+.justify-content-center {
+    justify-content: center;
+}
+
+.align-items-center {
+    align-items: center;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.mt-16 {
+    margin-top: 16px;
+}
+
+.mb-16 {
+    margin-bottom: 16px;
+}
+
+.p-16 {
+    padding: 16px;
+}
+
+/* ===================================
+   Responsive
+   =================================== */
+@media (max-width: 768px) {
+    .spec-editor {
+        padding: 8px;
+    }
+
+    .navbar-title {
+        font-size: 1rem;
+    }
+
+    .card-header-title {
+        font-size: 1rem;
+    }
+
+    .template-icon {
+        font-size: 24px;
+    }
+}
+
+/* ===================================
+   Animations
+   =================================== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card,
+.section-item {
+    animation: fadeIn 0.3s ease;
+}
+
+/* ===================================
+   Scrollbar Customization
+   =================================== */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-color);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color);
+}
+
+/* ===================================
+   Print Styles
+   =================================== */
+@media print {
+    .navbar,
+    .toolbar,
+    .button,
+    .section-item .item-after {
+        display: none !important;
+    }
+
+    .card {
+        box-shadow: none;
+        border: 1px solid var(--border-color);
+    }
+
+    body {
+        background: white;
+    }
+}

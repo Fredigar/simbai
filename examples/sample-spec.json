@@ -1,0 +1,117 @@
+{
+  "metadata": {
+    "title": "SIMBA - Sistema de Chat Inteligente",
+    "version": "1.0.0",
+    "author": "Equipo SIMBA",
+    "created": "2024-12-11T00:00:00Z",
+    "updated": "2024-12-11T12:00:00Z",
+    "tags": ["ai", "chat", "rag", "tools"],
+    "category": "system"
+  },
+  "sections": [
+    {
+      "id": "section-1-overview",
+      "type": "system-overview",
+      "title": "Sistema de Asistentes Múltiples",
+      "order": 0,
+      "content": {
+        "description": "SIMBA soporta múltiples asistentes especializados que puedes cambiar sin perder tu conversación.",
+        "features": [
+          "Cambio de asistente en tiempo real",
+          "Galería de asistentes con avatares únicos",
+          "Switching temporal con chip visual",
+          "Indicador de asistente activo",
+          "Configuración personalizable por asistente"
+        ]
+      },
+      "createdAt": "2024-12-11T00:00:00Z",
+      "updatedAt": "2024-12-11T12:00:00Z"
+    },
+    {
+      "id": "section-2-rag",
+      "type": "rag-system",
+      "title": "Sistema RAG (Retrieval-Augmented Generation)",
+      "order": 1,
+      "content": {
+        "ragDescription": "RAG significa que SIMBA busca información en tus documentos corporativos ANTES de responder, asegurando respuestas basadas en datos reales de tu empresa.",
+        "searchSteps": [
+          "Analiza tu pregunta → Identifica conceptos clave",
+          "Busca en múltiples fuentes → Sistemas configurados",
+          "Encuentra contenido relevante → Usa embeddings de IA",
+          "Te muestra qué encontró → Referencias numeradas clickeables",
+          "Genera respuesta contextualizada → Basada en documentos reales"
+        ],
+        "sources": [
+          "Sistema Wiki (Confluence)",
+          "Documentos Locales (carpetas compartidas)",
+          "Repositorios de Código (GitHub)",
+          "Bases de Datos corporativas",
+          "APIs personalizadas"
+        ]
+      },
+      "createdAt": "2024-12-11T00:00:00Z",
+      "updatedAt": "2024-12-11T12:00:00Z"
+    },
+    {
+      "id": "section-3-tools",
+      "type": "tools-dynamic",
+      "title": "Sistema de Herramientas Dinámico y Extensible",
+      "order": 2,
+      "content": {
+        "architecture": "SIMBA implementa un sistema de herramientas completamente dinámico y extensible, similar a Open-WebUI. No hay herramientas fijas - todo es configurable, extensible y adaptable a las necesidades de cada organización.",
+        "providers": [
+          "Confluence (Wiki corporativa)",
+          "Carpeta Local (búsqueda semántica)",
+          "Jira (sistema de ticketing)",
+          "Base de Datos SQL",
+          "REST API personalizada",
+          "Custom Providers (código Python)"
+        ],
+        "configuration": "services:\n  confluence_wiki:\n    enabled: true\n    type: confluence\n    url: https://confluence.empresa.com\n    auth:\n      type: basic\n      username: ${CONFLUENCE_USER}\n      password: ${CONFLUENCE_PASS}\n    tools:\n      - name: search\n        description: \"Buscar en wiki corporativa\"\n        enabled: true"
+      },
+      "createdAt": "2024-12-11T00:00:00Z",
+      "updatedAt": "2024-12-11T12:00:00Z"
+    },
+    {
+      "id": "section-4-reasoning",
+      "type": "reasoning",
+      "title": "Sistema de Reasoning y Orquestación",
+      "order": 3,
+      "content": {
+        "description": "Reasoning es el proceso donde SIMBA 'piensa en voz alta' antes de responder preguntas complejas.",
+        "phases": [
+          "FASE 1: Orchestrator LLM - Crea un plan de ejecución con pasos y herramientas",
+          "FASE 2: Main LLM - Ejecuta el plan y genera la respuesta final"
+        ],
+        "features": [
+          "Activación/Desactivación mediante toggle",
+          "Panel de ejecución minimalista",
+          "Indicadores visuales de estado por paso",
+          "Resolución automática de dependencias entre pasos",
+          "Posibilidad de abortar ejecución"
+        ]
+      },
+      "createdAt": "2024-12-11T00:00:00Z",
+      "updatedAt": "2024-12-11T12:00:00Z"
+    },
+    {
+      "id": "section-5-config",
+      "type": "configuration",
+      "title": "Personalización y Configuración",
+      "order": 4,
+      "content": {
+        "settings": [
+          "API Configuration - URLs y credenciales",
+          "Model Configuration - Modelos de IA a usar",
+          "Voice Configuration - Control de voz",
+          "Document Configuration - Gestión de documentos",
+          "Reasoning Configuration - Sistema de razonamiento",
+          "Tools & Services - Gestión de herramientas"
+        ],
+        "advanced": "Configuración de modelos incluye: modelo principal para respuestas, modelo de resumen para documentos, modelo de visión para análisis de imágenes, y modelo orchestrator para planning."
+      },
+      "createdAt": "2024-12-11T00:00:00Z",
+      "updatedAt": "2024-12-11T12:00:00Z"
+    }
+  ]
+}

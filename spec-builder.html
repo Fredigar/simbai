@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIMBA - Specification Builder</title>
+
+    <!-- Framework7 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/framework7@8/framework7-bundle.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="./assets/css/spec-builder.css">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div id="app"></div>
+
+    <!-- Framework7 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/framework7@8/framework7-bundle.min.js"></script>
+
+    <!-- Lit HTML -->
+    <script src="https://cdn.jsdelivr.net/npm/lit-html@3/lit-html.js"></script>
+
+    <!-- Core Modules -->
+    <script src="./assets/js/custom/core/SpecBuilder.js"></script>
+    <script src="./assets/js/custom/core/TemplateEngine.js"></script>
+    <script src="./assets/js/custom/core/Validator.js"></script>
+    <script src="./assets/js/custom/core/Exporter.js"></script>
+
+    <!-- Main App Script -->
+    <script type="module">
+        import { html, render } from 'https://cdn.jsdelivr.net/npm/lit-html@3/lit-html.js';
+
+        // Initialize Framework7
+        const app = new Framework7({
+            el: '#app',
+            name: 'SIMBA Spec Builder',
+            theme: 'auto',
+            darkMode: 'auto'
+        });
+
+        // Initialize core modules
+        const templateEngine = new TemplateEngine();
+        const validator = new Validator();
+        const exporter = new Exporter(templateEngine);
+        const specBuilder = new SpecBuilder({
+            templateEngine,
+            validator,
+            exporter
+        });
+
+        // Initialize template engine
+        await templateEngine.init();
+
+        // Component State
+        let state = {
+            specification: specBuilder.getState().specification,
+            selectedSection: null,
+            editingSection: null,
+            showTemplateGallery: false,
+            showMetadataEditor: false,
+            showPreview: false,
+            validationErrors: [],
+            isDirty: false
+        };
+
+        // Template helper (similar to conversation.html $h pattern)
+        const $h = html;
+
+        // Event Handlers
+        const handleAddSection = (templateId) => {
+            state.editingSection = {
+                type: templateId,
+                title: '',
+                content: {}
+            };
+            state.showTemplateGallery = false;
+            updateUI();
+        };
+
+        const handleSaveSection = () => {
+            if (!state.editingSection) return;
+
+            if (state.editingSection.id) {
+                // Update existing
+                specBuilder.updateSection(state.editingSection.id, state.editingSection);
+            } else {
+                // Add new
+                specBuilder.addSection(state.editingSection.type, state.editingSection);
+            }
+
+            state.editingSection = null;
+            state.specification = specBuilder.getState().specification;
+            state.isDirty = true;
+            updateUI();
+        };
+
+        const handleCancelEdit = () => {
+            state.editingSection = null;
+            updateUI();
+        };
+
+        const handleEditSection = (sectionId) => {
+            const section = specBuilder.getSection(sectionId);
+            state.editingSection = { ...section };
+            updateUI();
+        };
+
+        const handleDeleteSection = (sectionId) => {
+            app.dialog.confirm(
+                '¿Estás seguro de eliminar esta sección?',
+                'Confirmar eliminación',
+                () => {
+                    specBuilder.removeSection(sectionId);
+                    state.specification = specBuilder.getState().specification;
+                    state.isDirty = true;
+                    updateUI();
+                }
+            );
+        };
+
+        const handleReorderSection = (fromIndex, toIndex) => {
+            specBuilder.reorderSections(fromIndex, toIndex);
+            state.specification = specBuilder.getState().specification;
+            updateUI();
+        };
+
+        const handleUpdateMetadata = (field, value) => {
+            const metadata = { [field]: value };
+            specBuilder.updateMetadata(metadata);
+            state.specification = specBuilder.getState().specification;
+            state.isDirty = true;
+            updateUI();
+        };
+
+        const handleUpdateSectionField = (field, value) => {
+            if (!state.editingSection) return;
+
+            if (field.startsWith('content.')) {
+                const contentField = field.replace('content.', '');
+                state.editingSection.content[contentField] = value;
+            } else {
+                state.editingSection[field] = value;
+            }
+
+            updateUI();
+        };
+
+        const handleValidate = () => {
+            const result = specBuilder.validate();
+            state.validationErrors = result.errors;
+
+            app.dialog.alert(
+                result.valid
+                    ? '✅ Especificación válida'
+                    : `⚠️ Se encontraron ${result.errorCount} errores y ${result.warningCount} advertencias`,
+                'Resultado de Validación'
+            );
+
+            updateUI();
+        };
+
+        const handleExport = (format) => {
+            try {
+                const content = specBuilder.export(format);
+
+                if (format === 'markdown' || format === 'md') {
+                    exporter.download(content, 'specifications.md', 'text/markdown');
+                } else if (format === 'json') {
+                    exporter.download(content, 'specification.json', 'application/json');
+                } else if (format === 'html') {
+                    exporter.download(content, 'specification.html', 'text/html');
+                }
+
+                app.toast.create({
+                    text: `✅ Exportado como ${format.toUpperCase()}`,
+                    position: 'center',
+                    closeTimeout: 2000
+                }).open();
+            } catch (error) {
+                app.dialog.alert(error.message, 'Error al exportar');
+            }
+        };
+
+        const handleSave = () => {
+            specBuilder.save();
+            state.isDirty = false;
+            app.toast.create({
+                text: '💾 Especificación guardada',
+                position: 'center',
+                closeTimeout: 2000
+            }).open();
+            updateUI();
+        };
+
+        const handleLoad = () => {
+            specBuilder.load();
+            state.specification = specBuilder.getState().specification;
+            state.isDirty = false;
+            updateUI();
+        };
+
+        const handleNew = () => {
+            if (state.isDirty) {
+                app.dialog.confirm(
+                    'Hay cambios sin guardar. ¿Deseas continuar?',
+                    'Cambios sin guardar',
+                    () => {
+                        specBuilder.clear();
+                        state.specification = specBuilder.getState().specification;
+                        state.isDirty = false;
+                        updateUI();
+                    }
+                );
+            } else {
+                specBuilder.clear();
+                state.specification = specBuilder.getState().specification;
+                updateUI();
+            }
+        };
+
+        const togglePreview = () => {
+            state.showPreview = !state.showPreview;
+            updateUI();
+        };
+
+        // Main Template
+        const renderApp = () => $h`
+            <div class="view view-main">
+                <!-- Navbar -->
+                ${renderNavbar()}
+
+                <!-- Page Content -->
+                <div class="page">
+                    <div class="page-content">
+                        ${state.showPreview
+                            ? renderPreview()
+                            : renderEditor()}
+                    </div>
+                </div>
+
+                <!-- Template Gallery Popup -->
+                ${renderTemplateGallery()}
+
+                <!-- Metadata Editor Popup -->
+                ${renderMetadataEditor()}
+
+                <!-- Section Editor Sheet -->
+                ${renderSectionEditor()}
+            </div>
+        `;
+
+        // Navbar Template
+        const renderNavbar = () => $h`
+            <div class="navbar">
+                <div class="navbar-bg"></div>
+                <div class="navbar-inner">
+                    <div class="left">
+                        <h1 class="navbar-title">
+                            📝 ${state.specification.metadata.title || 'Nueva Especificación'}
+                        </h1>
+                    </div>
+                    <div class="right">
+                        ${state.isDirty ? $h`<span class="badge color-orange">●</span>` : ''}
+                        <a class="link" @click=${handleSave}>
+                            <i class="material-icons">save</i>
+                        </a>
+                        <a class="link" @click=${handleValidate}>
+                            <i class="material-icons">fact_check</i>
+                        </a>
+                        <a class="link popover-open" data-popover=".popover-export">
+                            <i class="material-icons">file_download</i>
+                        </a>
+                        <a class="link popover-open" data-popover=".popover-menu">
+                            <i class="material-icons">more_vert</i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Export Popover -->
+            <div class="popover popover-export">
+                <div class="popover-inner">
+                    <div class="list">
+                        <ul>
+                            <li><a class="list-button item-link popover-close" @click=${() => handleExport('markdown')}>
+                                <i class="fa fa-markdown"></i> Exportar como Markdown
+                            </a></li>
+                            <li><a class="list-button item-link popover-close" @click=${() => handleExport('json')}>
+                                <i class="fa fa-code"></i> Exportar como JSON
+                            </a></li>
+                            <li><a class="list-button item-link popover-close" @click=${() => handleExport('html')}>
+                                <i class="fa fa-html5"></i> Exportar como HTML
+                            </a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Menu Popover -->
+            <div class="popover popover-menu">
+                <div class="popover-inner">
+                    <div class="list">
+                        <ul>
+                            <li><a class="list-button item-link popover-close" @click=${handleNew}>
+                                <i class="material-icons">add</i> Nueva Especificación
+                            </a></li>
+                            <li><a class="list-button item-link popover-close" @click=${handleLoad}>
+                                <i class="material-icons">folder_open</i> Cargar Guardada
+                            </a></li>
+                            <li><a class="list-button item-link popover-close" @click=${() => { state.showMetadataEditor = true; updateUI(); }}>
+                                <i class="material-icons">settings</i> Editar Metadata
+                            </a></li>
+                            <li><a class="list-button item-link popover-close" @click=${togglePreview}>
+                                <i class="material-icons">${state.showPreview ? 'edit' : 'preview'}</i>
+                                ${state.showPreview ? 'Volver a Editor' : 'Vista Previa'}
+                            </a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Editor Template
+        const renderEditor = () => $h`
+            <div class="spec-editor">
+                <!-- Metadata Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-header-title">Metadata</div>
+                        <a @click=${() => { state.showMetadataEditor = true; updateUI(); }}>
+                            <i class="material-icons">edit</i>
+                        </a>
+                    </div>
+                    <div class="card-content card-content-padding">
+                        <div class="metadata-display">
+                            <p><strong>Título:</strong> ${state.specification.metadata.title || 'Sin título'}</p>
+                            <p><strong>Versión:</strong> ${state.specification.metadata.version}</p>
+                            <p><strong>Autor:</strong> ${state.specification.metadata.author || 'No especificado'}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sections List -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-header-title">
+                            Secciones (${state.specification.sections.length})
+                        </div>
+                        <a @click=${() => { state.showTemplateGallery = true; updateUI(); }}>
+                            <i class="material-icons">add_circle</i>
+                        </a>
+                    </div>
+                    <div class="card-content">
+                        ${state.specification.sections.length === 0 ? $h`
+                            <div class="empty-state">
+                                <i class="material-icons">description</i>
+                                <p>No hay secciones aún</p>
+                                <button class="button button-fill" @click=${() => { state.showTemplateGallery = true; updateUI(); }}>
+                                    Agregar Primera Sección
+                                </button>
+                            </div>
+                        ` : $h`
+                            <div class="list sortable">
+                                <ul>
+                                    ${state.specification.sections
+                                        .sort((a, b) => a.order - b.order)
+                                        .map(section => $h`
+                                        <li class="section-item">
+                                            <div class="item-content">
+                                                <div class="item-media">
+                                                    <i class="material-icons">drag_indicator</i>
+                                                </div>
+                                                <div class="item-inner">
+                                                    <div class="item-title">
+                                                        ${section.title}
+                                                        <div class="item-subtitle">${section.type}</div>
+                                                    </div>
+                                                    <div class="item-after">
+                                                        <a @click=${() => handleEditSection(section.id)}>
+                                                            <i class="material-icons">edit</i>
+                                                        </a>
+                                                        <a @click=${() => handleDeleteSection(section.id)}>
+                                                            <i class="material-icons">delete</i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    `)}
+                                </ul>
+                            </div>
+                        `}
+                    </div>
+                </div>
+
+                <!-- Validation Results -->
+                ${state.validationErrors.length > 0 ? $h`
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-header-title">Validación</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="list">
+                                <ul>
+                                    ${state.validationErrors.map(error => $h`
+                                        <li class="validation-error validation-${error.type}">
+                                            <div class="item-content">
+                                                <div class="item-inner">
+                                                    <div class="item-title">
+                                                        ${error.type === 'error' ? '❌' : error.type === 'warning' ? '⚠️' : 'ℹ️'}
+                                                        ${error.message}
+                                                    </div>
+                                                    ${error.field ? $h`
+                                                        <div class="item-subtitle">${error.field}</div>
+                                                    ` : ''}
+                                                </div>
+                                            </div>
+                                        </li>
+                                    `)}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                ` : ''}
+            </div>
+        `;
+
+        // Preview Template
+        const renderPreview = () => $h`
+            <div class="preview-pane">
+                <div class="preview-toolbar">
+                    <button class="button" @click=${togglePreview}>
+                        <i class="material-icons">arrow_back</i> Volver al Editor
+                    </button>
+                </div>
+                <div class="preview-content">
+                    <pre>${specBuilder.export('markdown')}</pre>
+                </div>
+            </div>
+        `;
+
+        // Template Gallery (Popup)
+        const renderTemplateGallery = () => {
+            if (!state.showTemplateGallery) return '';
+
+            const templates = templateEngine.getAllTemplates();
+            const categories = templateEngine.getCategories();
+
+            return $h`
+                <div class="popup popup-template-gallery ${state.showTemplateGallery ? 'popup-open' : ''}">
+                    <div class="view">
+                        <div class="page">
+                            <div class="navbar">
+                                <div class="navbar-bg"></div>
+                                <div class="navbar-inner">
+                                    <div class="left">
+                                        <a class="link popup-close" @click=${() => { state.showTemplateGallery = false; updateUI(); }}>
+                                            <i class="material-icons">close</i>
+                                        </a>
+                                    </div>
+                                    <div class="title">Selecciona una Sección</div>
+                                </div>
+                            </div>
+                            <div class="page-content">
+                                <div class="block-title">Templates Disponibles</div>
+                                <div class="list">
+                                    <ul>
+                                        ${templates.map(template => $h`
+                                            <li>
+                                                <a class="item-link item-content" @click=${() => handleAddSection(template.id)}>
+                                                    <div class="item-media">
+                                                        <span class="template-icon">${template.icon}</span>
+                                                    </div>
+                                                    <div class="item-inner">
+                                                        <div class="item-title">${template.name}</div>
+                                                        <div class="item-subtitle">${template.category}</div>
+                                                    </div>
+                                                </a>
+                                            </li>
+                                        `)}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        };
+
+        // Metadata Editor (Popup)
+        const renderMetadataEditor = () => {
+            if (!state.showMetadataEditor) return '';
+
+            return $h`
+                <div class="popup popup-metadata ${state.showMetadataEditor ? 'popup-open' : ''}">
+                    <div class="view">
+                        <div class="page">
+                            <div class="navbar">
+                                <div class="navbar-bg"></div>
+                                <div class="navbar-inner">
+                                    <div class="left">
+                                        <a class="link popup-close" @click=${() => { state.showMetadataEditor = false; updateUI(); }}>
+                                            <i class="material-icons">close</i>
+                                        </a>
+                                    </div>
+                                    <div class="title">Editar Metadata</div>
+                                </div>
+                            </div>
+                            <div class="page-content">
+                                <div class="list">
+                                    <ul>
+                                        <li class="item-content item-input">
+                                            <div class="item-inner">
+                                                <div class="item-title item-label">Título</div>
+                                                <div class="item-input-wrap">
+                                                    <input type="text"
+                                                           value="${state.specification.metadata.title}"
+                                                           @input=${(e) => handleUpdateMetadata('title', e.target.value)}
+                                                           placeholder="Título de la especificación">
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="item-content item-input">
+                                            <div class="item-inner">
+                                                <div class="item-title item-label">Versión</div>
+                                                <div class="item-input-wrap">
+                                                    <input type="text"
+                                                           value="${state.specification.metadata.version}"
+                                                           @input=${(e) => handleUpdateMetadata('version', e.target.value)}
+                                                           placeholder="1.0.0">
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="item-content item-input">
+                                            <div class="item-inner">
+                                                <div class="item-title item-label">Autor</div>
+                                                <div class="item-input-wrap">
+                                                    <input type="text"
+                                                           value="${state.specification.metadata.author}"
+                                                           @input=${(e) => handleUpdateMetadata('author', e.target.value)}
+                                                           placeholder="Nombre del autor">
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="block">
+                                    <button class="button button-fill popup-close" @click=${() => { state.showMetadataEditor = false; updateUI(); }}>
+                                        Guardar Cambios
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        };
+
+        // Section Editor (Sheet Modal)
+        const renderSectionEditor = () => {
+            if (!state.editingSection) return '';
+
+            const template = templateEngine.getTemplate(state.editingSection.type);
+
+            return $h`
+                <div class="sheet-modal sheet-section-editor" style="height: 80%">
+                    <div class="toolbar">
+                        <div class="toolbar-inner">
+                            <div class="left">
+                                <a class="link sheet-close" @click=${handleCancelEdit}>Cancelar</a>
+                            </div>
+                            <div class="right">
+                                <a class="link sheet-close" @click=${handleSaveSection}><strong>Guardar</strong></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sheet-modal-inner">
+                        <div class="page-content">
+                            <div class="block-title">Editar: ${template ? template.name : state.editingSection.type}</div>
+                            <div class="list">
+                                <ul>
+                                    <li class="item-content item-input">
+                                        <div class="item-inner">
+                                            <div class="item-title item-label">Título de la Sección</div>
+                                            <div class="item-input-wrap">
+                                                <input type="text"
+                                                       value="${state.editingSection.title}"
+                                                       @input=${(e) => handleUpdateSectionField('title', e.target.value)}
+                                                       placeholder="Título">
+                                            </div>
+                                        </div>
+                                    </li>
+                                    ${template ? Object.entries(template.fields).map(([fieldName, field]) => $h`
+                                        <li class="item-content item-input">
+                                            <div class="item-inner">
+                                                <div class="item-title item-label">${field.label}</div>
+                                                <div class="item-input-wrap">
+                                                    ${field.type === 'textarea' ? $h`
+                                                        <textarea
+                                                            @input=${(e) => handleUpdateSectionField(`content.${fieldName}`, e.target.value)}
+                                                            placeholder="${field.label}"
+                                                        >${state.editingSection.content[fieldName] || ''}</textarea>
+                                                    ` : field.type === 'list' ? $h`
+                                                        <textarea
+                                                            @input=${(e) => handleUpdateSectionField(`content.${fieldName}`, e.target.value.split('\n'))}
+                                                            placeholder="Una línea por ítem"
+                                                        >${Array.isArray(state.editingSection.content[fieldName])
+                                                            ? state.editingSection.content[fieldName].join('\n')
+                                                            : ''}</textarea>
+                                                    ` : $h`
+                                                        <input type="text"
+                                                               value="${state.editingSection.content[fieldName] || ''}"
+                                                               @input=${(e) => handleUpdateSectionField(`content.${fieldName}`, e.target.value)}
+                                                               placeholder="${field.label}">
+                                                    `}
+                                                </div>
+                                            </div>
+                                        </li>
+                                    `) : ''}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        };
+
+        // Update UI Function
+        const updateUI = () => {
+            render(renderApp(), document.getElementById('app'));
+
+            // Open sheet modal if editing
+            if (state.editingSection) {
+                const sheet = app.sheet.create({
+                    el: '.sheet-section-editor',
+                    swipeToClose: true,
+                    backdrop: true
+                });
+                sheet.open();
+            }
+        };
+
+        // Initial Render
+        updateUI();
+
+        // Load saved specification if exists
+        handleLoad();
+    </script>
+</body>
+</html>
