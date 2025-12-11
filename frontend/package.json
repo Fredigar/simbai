@@ -1,0 +1,16 @@
+{
+  "name": "simba-frontend",
+  "version": "2.0.0",
+  "description": "SIMBA - Sistema Inteligente de Mensajería con Backend Avanzado",
+  "main": "src/main.js",
+  "scripts": {
+    "dev": "python3 -m http.server 3000",
+    "serve": "python3 -m http.server 3000"
+  },
+  "keywords": ["chat", "ai", "rag", "lit-html", "framework7"],
+  "author": "SIMBA Team",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {},
+  "note": "Dependencies loaded from CDN (no build step required)"
+}

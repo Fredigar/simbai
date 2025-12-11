@@ -1,0 +1,94 @@
+version: '3.8'
+
+services:
+  # Backend API
+  backend:
+    build: ./backend
+    container_name: simba-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://simba:simba@db:5432/simba
+      - REDIS_URL=redis://redis:6379/0
+      - CHROMA_HOST=chromadb
+      - CHROMA_PORT=8000
+    env_file:
+      - ./backend/.env
+    volumes:
+      - ./backend:/app
+      - simba_uploads:/app/uploads
+    depends_on:
+      - db
+      - redis
+      - chromadb
+    networks:
+      - simba-network
+    restart: unless-stopped
+
+  # Frontend
+  frontend:
+    image: nginx:alpine
+    container_name: simba-frontend
+    ports:
+      - "3000:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - backend
+    networks:
+      - simba-network
+    restart: unless-stopped
+
+  # PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    container_name: simba-db
+    environment:
+      - POSTGRES_USER=simba
+      - POSTGRES_PASSWORD=simba
+      - POSTGRES_DB=simba
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - simba-network
+    restart: unless-stopped
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: simba-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - simba-network
+    restart: unless-stopped
+
+  # ChromaDB Vector Store
+  chromadb:
+    image: chromadb/chroma:latest
+    container_name: simba-chromadb
+    ports:
+      - "8001:8000"
+    volumes:
+      - chroma_data:/chroma/chroma
+    environment:
+      - IS_PERSISTENT=TRUE
+      - ANONYMIZED_TELEMETRY=FALSE
+    networks:
+      - simba-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
+  chroma_data:
+  simba_uploads:
+
+networks:
+  simba-network:
+    driver: bridge
