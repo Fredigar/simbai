@@ -7,7 +7,7 @@ Main FastAPI application with routes and middleware.
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
-from app.api.routes import chat
+from app.api.routes import chat, rag, documents
 from app.utils.logger import logger
 
 
@@ -29,6 +29,8 @@ app.add_middleware(
 
 # Include routers
 app.include_router(chat.router)
+app.include_router(rag.router)
+app.include_router(documents.router)
 
 
 @app.on_event("startup")
