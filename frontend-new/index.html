@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#2196f3">
+
+    <title>SIMBA - Sistema Inteligente de Mensajería</title>
+
+    <!-- Framework7 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/framework7@8/css/framework7.bundle.min.css">
+
+    <!-- Material Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+    <!-- App root element -->
+    <div id="app">
+
+        <!-- Left Panel (Conversations List) -->
+        <div class="panel panel-left panel-cover panel-init">
+            <div class="page">
+                <div class="navbar">
+                    <div class="navbar-bg"></div>
+                    <div class="navbar-inner">
+                        <div class="title">Conversaciones</div>
+                        <div class="right">
+                            <a href="#" class="link panel-close">
+                                <i class="icon material-icons">close</i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="page-content">
+                    <div class="list media-list">
+                        <ul id="conversations-list">
+                            <!-- Conversations will be loaded here -->
+                        </ul>
+                    </div>
+                    <div class="block text-align-center" id="no-conversations" style="display: none;">
+                        <p>No hay conversaciones aún.</p>
+                        <p>Inicia una nueva conversación para comenzar.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main View -->
+        <div class="view view-main view-init safe-areas" data-url="/">
+
+            <!-- Initial Page -->
+            <div class="page" data-name="home">
+
+                <!-- Navbar -->
+                <div class="navbar">
+                    <div class="navbar-bg"></div>
+                    <div class="navbar-inner sliding">
+                        <div class="left">
+                            <a href="#" class="link panel-open" data-panel="left">
+                                <i class="icon material-icons">menu</i>
+                            </a>
+                        </div>
+                        <div class="title" id="conversation-title">SIMBA Chat</div>
+                        <div class="right">
+                            <a href="#" class="link" id="new-conversation-btn">
+                                <i class="icon material-icons">add_circle</i>
+                            </a>
+                            <a href="#" class="link" id="settings-btn">
+                                <i class="icon material-icons">settings</i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Page Content -->
+                <div class="page-content messages-content">
+
+                    <!-- Welcome Screen (shown when no conversation is active) -->
+                    <div id="welcome-screen" class="block text-align-center" style="padding-top: 100px;">
+                        <div style="max-width: 600px; margin: 0 auto;">
+                            <i class="icon material-icons" style="font-size: 120px; color: #2196f3;">chat</i>
+                            <div class="block-title-large">Bienvenido a SIMBA</div>
+                            <p class="text-color-gray">Sistema Inteligente de Mensajería con Backend Avanzado</p>
+                            <div class="block">
+                                <button class="button button-fill button-large" id="start-chat-btn">
+                                    <i class="icon material-icons">chat_bubble</i>
+                                    <span>Iniciar Nueva Conversación</span>
+                                </button>
+                            </div>
+
+                            <!-- Features -->
+                            <div class="list media-list inset">
+                                <ul>
+                                    <li>
+                                        <div class="item-content">
+                                            <div class="item-media">
+                                                <i class="icon material-icons color-blue">psychology</i>
+                                            </div>
+                                            <div class="item-inner">
+                                                <div class="item-title-row">
+                                                    <div class="item-title">Multi-LLM Support</div>
+                                                </div>
+                                                <div class="item-subtitle">OpenAI, Anthropic y más</div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="item-content">
+                                            <div class="item-media">
+                                                <i class="icon material-icons color-green">search</i>
+                                            </div>
+                                            <div class="item-inner">
+                                                <div class="item-title-row">
+                                                    <div class="item-title">RAG Avanzado</div>
+                                                </div>
+                                                <div class="item-subtitle">Búsqueda semántica en documentos</div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="item-content">
+                                            <div class="item-media">
+                                                <i class="icon material-icons color-orange">description</i>
+                                            </div>
+                                            <div class="item-inner">
+                                                <div class="item-title-row">
+                                                    <div class="item-title">Procesamiento de Archivos</div>
+                                                </div>
+                                                <div class="item-subtitle">PDF, DOCX, TXT y más</div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Messages Area (shown when conversation is active) -->
+                    <div id="messages-container" style="display: none;">
+                        <div class="messages" id="messages"></div>
+                    </div>
+
+                </div>
+
+                <!-- Messagebar -->
+                <div class="messagebar" id="messagebar" style="display: none;">
+                    <div class="messagebar-area">
+                        <div class="messagebar-attachments" id="attachments-area" style="display: none;"></div>
+                        <textarea class="resizable" placeholder="Escribe un mensaje..."></textarea>
+                    </div>
+                    <a href="#" class="link" id="attach-file-btn">
+                        <i class="icon material-icons">attach_file</i>
+                    </a>
+                    <a href="#" class="link" id="send-message-btn">
+                        <i class="icon material-icons">send</i>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Settings Popup -->
+    <div class="popup" id="settings-popup">
+        <div class="page">
+            <div class="navbar">
+                <div class="navbar-bg"></div>
+                <div class="navbar-inner">
+                    <div class="title">Configuración</div>
+                    <div class="right">
+                        <a href="#" class="link popup-close">Cerrar</a>
+                    </div>
+                </div>
+            </div>
+            <div class="page-content">
+                <div class="list inset">
+                    <ul>
+                        <li>
+                            <div class="item-content item-input">
+                                <div class="item-inner">
+                                    <div class="item-title item-label">Backend URL</div>
+                                    <div class="item-input-wrap">
+                                        <input type="text" id="backend-url-input" value="http://82.223.12.60:8000">
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="item-content item-input">
+                                <div class="item-inner">
+                                    <div class="item-title item-label">Modelo LLM</div>
+                                    <div class="item-input-wrap">
+                                        <select id="model-select">
+                                            <option value="gpt-4">GPT-4</option>
+                                            <option value="gpt-3.5-turbo" selected>GPT-3.5 Turbo</option>
+                                            <option value="claude-3-opus">Claude 3 Opus</option>
+                                            <option value="claude-3-sonnet">Claude 3 Sonnet</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="item-content item-input">
+                                <div class="item-inner">
+                                    <div class="item-title item-label">Temperatura (0-2)</div>
+                                    <div class="item-input-wrap">
+                                        <input type="range" id="temperature-slider" min="0" max="2" step="0.1" value="0.7">
+                                        <span id="temperature-value">0.7</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="item-content item-input">
+                                <div class="item-inner">
+                                    <div class="item-title item-label">Streaming</div>
+                                    <div class="item-input-wrap">
+                                        <label class="toggle toggle-init">
+                                            <input type="checkbox" id="streaming-toggle" checked>
+                                            <span class="toggle-icon"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="block-title">Acerca de SIMBA</div>
+                <div class="block block-strong inset">
+                    <p><strong>SIMBA v2.0.0</strong></p>
+                    <p>Sistema Inteligente de Mensajería con Backend Avanzado</p>
+                    <p class="text-color-gray">Powered by FastAPI, PostgreSQL, Redis y ChromaDB</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- File input (hidden) -->
+    <input type="file" id="file-input" style="display: none;" multiple accept=".pdf,.docx,.txt">
+
+    <!-- Framework7 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/framework7@8/js/framework7.bundle.min.js"></script>
+
+    <!-- App JS -->
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,329 @@
+/* SIMBA Custom Styles */
+
+:root {
+    --f7-theme-color: #2196f3;
+    --f7-theme-color-rgb: 33, 150, 243;
+    --f7-theme-color-shade: #0c7cd5;
+    --f7-theme-color-tint: #48a8f5;
+}
+
+/* Global Styles */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Messages Styling */
+.message {
+    margin: 10px 0;
+}
+
+.message-content {
+    max-width: 75%;
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+.message-sent .message-content {
+    background-color: #2196f3;
+    color: white;
+    margin-left: auto;
+}
+
+.message-received .message-content {
+    background-color: #f0f0f0;
+    color: #000;
+}
+
+.message-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+.message-name {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 4px;
+}
+
+.message-timestamp {
+    font-size: 11px;
+    color: #999;
+    margin-top: 4px;
+}
+
+/* Typing Indicator */
+.typing-indicator {
+    display: inline-flex;
+    align-items: center;
+    padding: 12px 16px;
+    background-color: #f0f0f0;
+    border-radius: 12px;
+    margin: 10px 0;
+}
+
+.typing-indicator span {
+    height: 8px;
+    width: 8px;
+    background-color: #666;
+    border-radius: 50%;
+    display: inline-block;
+    margin: 0 2px;
+    animation: typing 1.4s infinite;
+}
+
+.typing-indicator span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-indicator span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes typing {
+    0%, 60%, 100% {
+        transform: translateY(0);
+        opacity: 0.7;
+    }
+    30% {
+        transform: translateY(-10px);
+        opacity: 1;
+    }
+}
+
+/* Message Content Formatting */
+.message-content pre {
+    background-color: rgba(0, 0, 0, 0.05);
+    padding: 8px;
+    border-radius: 4px;
+    overflow-x: auto;
+}
+
+.message-content code {
+    background-color: rgba(0, 0, 0, 0.05);
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+}
+
+.message-content a {
+    color: inherit;
+    text-decoration: underline;
+}
+
+.message-sent .message-content code,
+.message-sent .message-content pre {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Messagebar Styling */
+.messagebar {
+    border-top: 1px solid #e0e0e0;
+    background-color: #fff;
+}
+
+.messagebar-area textarea {
+    font-size: 16px;
+    padding: 8px;
+}
+
+/* Attachments */
+.messagebar-attachment {
+    position: relative;
+    display: inline-block;
+    margin: 5px;
+}
+
+.messagebar-attachment img,
+.messagebar-attachment-preview {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.messagebar-attachment-delete {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 20px;
+    height: 20px;
+    background-color: #ff3b30;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+/* Document Attachment Display */
+.document-attachment {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    margin: 5px 0;
+}
+
+.document-attachment i {
+    font-size: 24px;
+    margin-right: 8px;
+    color: #666;
+}
+
+.document-attachment-info {
+    flex: 1;
+}
+
+.document-attachment-name {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.document-attachment-size {
+    font-size: 12px;
+    color: #999;
+}
+
+/* Conversations List */
+#conversations-list li {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+#conversations-list li:hover {
+    background-color: #f5f5f5;
+}
+
+#conversations-list li.active {
+    background-color: #e3f2fd;
+}
+
+/* Welcome Screen */
+#welcome-screen .material-icons {
+    color: var(--f7-theme-color);
+}
+
+/* Settings */
+#temperature-value {
+    margin-left: 10px;
+    font-weight: 500;
+    color: var(--f7-theme-color);
+}
+
+/* Loading Indicator */
+.messages-loading {
+    text-align: center;
+    padding: 20px;
+    color: #999;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #999;
+}
+
+.empty-state i {
+    font-size: 64px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
+
+/* Message Actions */
+.message-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.message-action-btn {
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    background-color: rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.message-action-btn:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Source Documents (RAG) */
+.source-documents {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.source-document {
+    font-size: 12px;
+    padding: 6px;
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 6px;
+    margin: 4px 0;
+}
+
+.source-document-title {
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.source-document-excerpt {
+    color: #666;
+    font-size: 11px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .message-content {
+        max-width: 90%;
+    }
+}
+
+/* Scrollbar Styling */
+.messages::-webkit-scrollbar {
+    width: 6px;
+}
+
+.messages::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.messages::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+}
+
+.messages::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+/* Error Message */
+.error-message {
+    background-color: #ffebee;
+    color: #c62828;
+    padding: 12px;
+    border-radius: 8px;
+    margin: 10px 0;
+    border-left: 4px solid #c62828;
+}
+
+/* Success Message */
+.success-message {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    padding: 12px;
+    border-radius: 8px;
+    margin: 10px 0;
+    border-left: 4px solid #2e7d32;
+}
