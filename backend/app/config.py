@@ -97,6 +97,7 @@ class Settings(BaseSettings):
         env_file = ".env"
         env_file_encoding = "utf-8"
         case_sensitive = True
+        extra = "ignore"  # Ignore extra fields like DB_PASSWORD used by docker-compose
 
     @property
     def max_upload_size_bytes(self) -> int:
