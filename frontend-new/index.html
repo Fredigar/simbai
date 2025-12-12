@@ -8,11 +8,13 @@
 
     <title>SIMBA - Sistema Inteligente de Mensajería</title>
 
-    <!-- Framework7 CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/framework7@8.3.3/css/framework7.bundle.min.css">
+    <!-- Framework7 CSS - Multiple CDN fallbacks -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/framework7@8.3.3/css/framework7.bundle.min.css"
+          onerror="this.onerror=null; this.href='https://unpkg.com/framework7@8.3.3/framework7-bundle.min.css'">
 
     <!-- Material Icons -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"
+          onerror="this.onerror=null; this.href='https://fonts.googleapis.com/css2?family=Material+Icons'"  >
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/app.css">
@@ -245,13 +247,49 @@
     <!-- File input (hidden) -->
     <input type="file" id="file-input" style="display: none;" multiple accept=".pdf,.docx,.txt">
 
-    <!-- Framework7 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/framework7@8.3.3/js/framework7.bundle.min.js"></script>
+    <!-- Framework7 JS - Multiple CDN fallbacks -->
+    <script src="https://cdn.jsdelivr.net/npm/framework7@8.3.3/js/framework7.bundle.min.js"
+            onerror="this.onerror=null; this.src='https://unpkg.com/framework7@8.3.3/framework7-bundle.min.js'"></script>
 
     <!-- App JS -->
-    <script src="js/config.js"></script>
-    <script src="js/api.js"></script>
-    <script src="js/app.js"></script>
+    <script>
+        // Wait for Framework7 to load before initializing app
+        window.addEventListener('DOMContentLoaded', function() {
+            if (typeof Framework7 === 'undefined') {
+                console.error('Framework7 failed to load from CDN. Trying alternative...');
+                var script = document.createElement('script');
+                script.src = 'https://unpkg.com/framework7@8.3.3/framework7-bundle.min.js';
+                script.onload = function() {
+                    console.log('Framework7 loaded from fallback CDN');
+                    loadAppScripts();
+                };
+                script.onerror = function() {
+                    document.body.innerHTML = '<div style="padding: 20px; text-align: center;"><h2>Error loading Framework7</h2><p>Cannot load required libraries. Please check your internet connection or try again later.</p></div>';
+                };
+                document.head.appendChild(script);
+            } else {
+                loadAppScripts();
+            }
+        });
+
+        function loadAppScripts() {
+            // Load scripts in order
+            var scripts = ['js/config.js', 'js/api.js', 'js/app.js'];
+            var loadScript = function(index) {
+                if (index >= scripts.length) return;
+                var script = document.createElement('script');
+                script.src = scripts[index];
+                script.onload = function() {
+                    loadScript(index + 1);
+                };
+                script.onerror = function() {
+                    console.error('Failed to load: ' + scripts[index]);
+                };
+                document.head.appendChild(script);
+            };
+            loadScript(0);
+        }
+    </script>
 
 </body>
 </html>
