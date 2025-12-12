@@ -163,11 +163,18 @@ class ChromaDBClient:
             return False
 
 
-# Singleton instance
-chroma_client = ChromaDBClient()
+# Singleton instance - lazy initialization
+_chroma_client: Optional[ChromaDBClient] = None
 
 
 # Dependency for FastAPI
 def get_chroma_client() -> ChromaDBClient:
-    """Dependency that provides ChromaDB client"""
-    return chroma_client
+    """Dependency that provides ChromaDB client with lazy initialization"""
+    global _chroma_client
+    if _chroma_client is None:
+        try:
+            _chroma_client = ChromaDBClient()
+        except Exception as e:
+            logger.error(f"Failed to initialize ChromaDB client: {e}")
+            raise
+    return _chroma_client
