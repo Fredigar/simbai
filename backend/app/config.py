@@ -32,6 +32,11 @@ class Settings(BaseSettings):
     CHROMA_PORT: int = 8001
     CHROMA_PERSIST_DIRECTORY: str = "./chroma_data"
 
+    @property
+    def chroma_url(self) -> str:
+        """Get ChromaDB URL"""
+        return f"http://{self.CHROMA_HOST}:{self.CHROMA_PORT}"
+
     # Redis (optional)
     REDIS_URL: str | None = None
 
